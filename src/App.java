@@ -1,5 +1,7 @@
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -9,6 +11,66 @@ import models.Maquina;
 public class App {
     public static void main(String[] args) throws Exception {
         List<Maquina> maquinas = crearMaquinas();
+
+
+        // Crear controller
+        MaquinaController controller = new MaquinaController();
+
+
+        // ========== A) FILTRAR POR SUBRED ==========
+        System.out.println("=== A) FILTRAR POR SUBRED ===");
+
+        Stack<Maquina> pilaSubred =
+                controller.filtrarPorSubred(maquinas, 200);
+
+        System.out.println("Total en pila: " + pilaSubred.size());
+
+
+        // ========== B) ORDENAR POR SUBRED ==========
+        System.out.println("\n=== B) ORDENAR POR SUBRED ===");
+
+        Set<Maquina> ordenadas =
+                controller.ordenarPorSubred(pilaSubred);
+
+        for (Maquina m : ordenadas) {
+            System.out.println(m.getNombre() + " - " + m.getSubred());
+        }
+
+
+        // ========== C) AGRUPAR POR RIESGO ==========
+        System.out.println("\n=== C) AGRUPAR POR RIESGO ===");
+
+        Map<Integer, Queue<Maquina>> mapaRiesgo =
+                controller.agruparPorRiesgo(maquinas);
+
+        for (Integer riesgo : mapaRiesgo.keySet()) {
+
+            System.out.println("Riesgo " + riesgo + ":");
+
+            Queue<Maquina> cola = mapaRiesgo.get(riesgo);
+
+            for (Maquina m : cola) {
+                System.out.println("   " + m.getNombre());
+            }
+        }
+
+
+        // ========== D) EXPLOTAR GRUPO ==========
+        System.out.println("\n=== D) EXPLOTAR GRUPO ===");
+
+        Stack<Maquina> pilaFinal =
+                controller.explotarGrupo(mapaRiesgo);
+
+        System.out.println("Pila final:");
+
+        while (!pilaFinal.isEmpty()) {
+
+            Maquina m = pilaFinal.pop();
+
+            System.out.println(m.getNombre() +
+                    " | Subred: " + m.getSubred() +
+                    " | Riesgo: " + m.getRiesgo());
+        }
 
     }
 
